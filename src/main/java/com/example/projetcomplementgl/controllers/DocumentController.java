@@ -43,18 +43,15 @@ public class DocumentController {
         }
     }
 
-    //TODO try catch
     @PostMapping("")
     public ResponseEntity<Document> add(@RequestBody DocumentAPI docForm) {
         try
         {
-            if(docForm.type.length() > 0) {
-                Type type = typeService.getByName(docForm.type);
-                Document newDoc = new Document(-1L, docForm.nom, docForm.path, Date.valueOf(LocalDate.now()), type);
-
-                return new ResponseEntity<>(documentService.save(newDoc), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if(docForm.type.length() == 0)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            Type type = typeService.getByName(docForm.type);
+            Document newDoc = new Document(-1L, docForm.nom, docForm.path, Date.valueOf(LocalDate.now()), type);
+            return new ResponseEntity<>(documentService.save(newDoc), HttpStatus.OK);
         }
         catch (Exception e)
         {
