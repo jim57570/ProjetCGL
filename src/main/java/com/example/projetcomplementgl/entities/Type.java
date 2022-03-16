@@ -13,17 +13,15 @@ public class Type {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idType")
     private Long id;
-    @OneToMany
-    @JoinColumn(name = "idDocument")
-    @JsonManagedReference
-    private Set<Document> documents;
+    @Column(name = "nomType")
+    private String nomType;
 
     public Type() {
     }
 
-    public Type(Long id, Set<Document> documents) {
+    public Type(Long id, String nomType) {
         this.id = id;
-        this.documents = documents;
+        this.nomType = nomType;
     }
 
     public Long getId() {
@@ -34,12 +32,12 @@ public class Type {
         this.id = id;
     }
 
-    public Set<Document> getDocuments() {
-        return documents;
+    public String getNomType() {
+        return nomType;
     }
 
-    public void setDocuments(Set<Document> documents) {
-        this.documents = documents;
+    public void setNomType(String nomType) {
+        this.nomType = nomType;
     }
 
     @Override
@@ -61,7 +59,7 @@ public class Type {
     public String toString() {
         return "Type{" +
                 "id=" + id +
-                ", documents=" + documents +
+                ", nomType='" + nomType + '\'' +
                 '}';
     }
 }

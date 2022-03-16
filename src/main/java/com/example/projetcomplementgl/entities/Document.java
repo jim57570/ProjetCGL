@@ -1,6 +1,7 @@
 package com.example.projetcomplementgl.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -20,8 +21,7 @@ public class Document {
     @Column(name = "date")
     private Date date;
     @ManyToOne
-    @Column(name = "idType")
-    @JsonBackReference
+    @JoinColumn(name = "idType")
     private Type type;
 
     public Document() {
