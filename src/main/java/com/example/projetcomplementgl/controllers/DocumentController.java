@@ -10,7 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.sql.Date;
+import java.time.LocalDate;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,7 +40,7 @@ public class DocumentController {
     public ResponseEntity<Document> add(@RequestBody DocumentAPI docForm) {
         if(docForm.type.length() > 0) {
             Type type = typeService.getByName(docForm.type);
-            Document newDoc = new Document(-1L, docForm.nom, docForm.path, new Date(System.currentTimeMillis()), type);
+            Document newDoc = new Document(-1L, docForm.nom, docForm.path, Date.valueOf(LocalDate.now()), type);
 
             return new ResponseEntity<>(documentService.save(newDoc), HttpStatus.OK);
         }
@@ -67,10 +72,12 @@ public class DocumentController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<Map<Date, Map<String, Long>>> getStats(){
+    public ResponseEntity<List<Stat>> getStats(){
         List<Document> list = documentService.findAll();
-        Map<Date, Map<String, Long>> stats = list.stream().collect(Collectors.groupingBy(Document::getDate, Collectors.groupingBy(l -> l.getType().getNomType(), Collectors.counting())));
-        return new ResponseEntity<>(stats, HttpStatus.OK);
+        Map<Date, Map<String, Long>> stats = list.stream().collect(Collectors.groupingBy(d -> d.getDate(), Collectors.groupingBy(l -> l.getType().getNomType(), Collectors.counting())));
+        List<Stat> listStat = new ArrayList<>();
+        stats.forEach((date, map) -> map.forEach((type, nb) -> listStat.add(new Stat(date, type, nb))));
+        return new ResponseEntity<>(listStat, HttpStatus.OK);
     }
 
 }
