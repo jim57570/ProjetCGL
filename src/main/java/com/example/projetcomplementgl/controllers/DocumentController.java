@@ -5,6 +5,7 @@ import com.example.projetcomplementgl.entities.Stat;
 import com.example.projetcomplementgl.entities.Type;
 import com.example.projetcomplementgl.entities.api.DocumentAPI;
 import com.example.projetcomplementgl.services.DocumentService;
+import com.example.projetcomplementgl.services.ExceptionService;
 import com.example.projetcomplementgl.services.TypeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,52 +33,94 @@ public class DocumentController {
 
     @GetMapping("")
     public ResponseEntity<List<Document>> getAll() {
-        return new ResponseEntity<>(documentService.findAll(), HttpStatus.OK);
+        try
+        {
+            return new ResponseEntity<>(documentService.findAll(), HttpStatus.OK);
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>(ExceptionService.getHttpCode(e));
+        }
     }
 
     //TODO try catch
     @PostMapping("")
     public ResponseEntity<Document> add(@RequestBody DocumentAPI docForm) {
-        if(docForm.type.length() > 0) {
-            Type type = typeService.getByName(docForm.type);
-            Document newDoc = new Document(-1L, docForm.nom, docForm.path, Date.valueOf(LocalDate.now()), type);
+        try
+        {
+            if(docForm.type.length() > 0) {
+                Type type = typeService.getByName(docForm.type);
+                Document newDoc = new Document(-1L, docForm.nom, docForm.path, Date.valueOf(LocalDate.now()), type);
 
-            return new ResponseEntity<>(documentService.save(newDoc), HttpStatus.OK);
+                return new ResponseEntity<>(documentService.save(newDoc), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        catch (Exception e)
+        {
+            return new ResponseEntity<>(ExceptionService.getHttpCode(e));
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        documentService.remove(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        try
+        {
+            documentService.remove(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>(ExceptionService.getHttpCode(e));
+        }
     }
 
     @GetMapping("/stats/date")
     public ResponseEntity<List<Stat>> getStatsByDate(){
-        List<Document> listDoc = documentService.findAll();
-        Map<Date, Long> stats = listDoc.stream().collect(Collectors.groupingBy(Document::getDate, Collectors.counting()));
-        List<Stat> listStat = new ArrayList<>();
-        stats.forEach((k, v) -> listStat.add(new Stat(k, "", v)));
-        return new ResponseEntity<>(listStat, HttpStatus.OK);
+        try
+        {
+            List<Document> listDoc = documentService.findAll();
+            Map<Date, Long> stats = listDoc.stream().collect(Collectors.groupingBy(Document::getDate, Collectors.counting()));
+            List<Stat> listStat = new ArrayList<>();
+            stats.forEach((k, v) -> listStat.add(new Stat(k, "", v)));
+            return new ResponseEntity<>(listStat, HttpStatus.OK);
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>(ExceptionService.getHttpCode(e));
+        }
     }
 
     @GetMapping("/stats/type")
     public ResponseEntity<List<Stat>> getStatsByType(){
-        List<Document> list = documentService.findAll();
-        Map<String, Long> stats = list.stream().collect(Collectors.groupingBy(l -> l.getType().getNomType(), Collectors.counting()));
-        List<Stat> listStat = new ArrayList<>();
-        stats.forEach((k, v) -> listStat.add(new Stat(null, k, v)));
-        return new ResponseEntity<>(listStat, HttpStatus.OK);
+        try
+        {
+            List<Document> list = documentService.findAll();
+            Map<String, Long> stats = list.stream().collect(Collectors.groupingBy(l -> l.getType().getNomType(), Collectors.counting()));
+            List<Stat> listStat = new ArrayList<>();
+            stats.forEach((k, v) -> listStat.add(new Stat(null, k, v)));
+            return new ResponseEntity<>(listStat, HttpStatus.OK);
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>(ExceptionService.getHttpCode(e));
+        }
     }
 
     @GetMapping("/stats")
     public ResponseEntity<List<Stat>> getStats(){
-        List<Document> list = documentService.findAll();
-        Map<Date, Map<String, Long>> stats = list.stream().collect(Collectors.groupingBy(d -> d.getDate(), Collectors.groupingBy(l -> l.getType().getNomType(), Collectors.counting())));
-        List<Stat> listStat = new ArrayList<>();
-        stats.forEach((date, map) -> map.forEach((type, nb) -> listStat.add(new Stat(date, type, nb))));
-        return new ResponseEntity<>(listStat, HttpStatus.OK);
+        try
+        {
+            List<Document> list = documentService.findAll();
+            Map<Date, Map<String, Long>> stats = list.stream().collect(Collectors.groupingBy(d -> d.getDate(), Collectors.groupingBy(l -> l.getType().getNomType(), Collectors.counting())));
+            List<Stat> listStat = new ArrayList<>();
+            stats.forEach((date, map) -> map.forEach((type, nb) -> listStat.add(new Stat(date, type, nb))));
+            return new ResponseEntity<>(listStat, HttpStatus.OK);
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>(ExceptionService.getHttpCode(e));
+        }
     }
 
 }
