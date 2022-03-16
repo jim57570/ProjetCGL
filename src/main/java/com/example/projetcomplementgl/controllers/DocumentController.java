@@ -1,6 +1,7 @@
 package com.example.projetcomplementgl.controllers;
 
 import com.example.projetcomplementgl.entities.Document;
+import com.example.projetcomplementgl.entities.Stat;
 import com.example.projetcomplementgl.entities.Type;
 import com.example.projetcomplementgl.entities.api.DocumentAPI;
 import com.example.projetcomplementgl.services.DocumentService;
@@ -9,10 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -51,24 +49,28 @@ public class DocumentController {
     }
 
     @GetMapping("/stats/date")
-    public ResponseEntity<Map<Date, Long>> getStatsByDate(){
-        List<Document> list = documentService.findAll();
-        Map<Date, Long> stats = list.stream().collect(Collectors.groupingBy(Document::getDate, Collectors.counting()));
-        return new ResponseEntity<>(stats, HttpStatus.OK);
+    public ResponseEntity<List<Stat>> getStatsByDate(){
+        List<Document> listDoc = documentService.findAll();
+        Map<Date, Long> stats = listDoc.stream().collect(Collectors.groupingBy(Document::getDate, Collectors.counting()));
+        List<Stat> listStat = new ArrayList<>();
+        stats.forEach((k, v) -> listStat.add(new Stat(k, "", v)));
+        return new ResponseEntity<>(listStat, HttpStatus.OK);
     }
 
     @GetMapping("/stats/type")
-    public ResponseEntity<Map<String, Long>> getStatsByType(){
+    public ResponseEntity<List<Stat>> getStatsByType(){
         List<Document> list = documentService.findAll();
         Map<String, Long> stats = list.stream().collect(Collectors.groupingBy(l -> l.getType().getNomType(), Collectors.counting()));
-        return new ResponseEntity<>(stats, HttpStatus.OK);
+        List<Stat> listStat = new ArrayList<>();
+        stats.forEach((k, v) -> listStat.add(new Stat(null, k, v)));
+        return new ResponseEntity<>(listStat, HttpStatus.OK);
     }
 
     @GetMapping("/stats")
     public ResponseEntity<Map<Date, Map<String, Long>>> getStats(){
-        //List<Document> list = documentService.findAll();
-        //Map<Date, Map<String, Long>> stats = list.stream().collect(Collectors.groupingBy(Document::getDate, list.stream().collect(Collectors.groupingBy(l -> l.toString(), Collectors.counting()))));
-        return new ResponseEntity<>(HttpStatus.OK);
+        List<Document> list = documentService.findAll();
+        Map<Date, Map<String, Long>> stats = list.stream().collect(Collectors.groupingBy(Document::getDate, Collectors.groupingBy(l -> l.getType().getNomType(), Collectors.counting())));
+        return new ResponseEntity<>(stats, HttpStatus.OK);
     }
 
 }
