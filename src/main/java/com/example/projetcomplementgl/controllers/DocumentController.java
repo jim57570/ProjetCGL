@@ -58,14 +58,16 @@ public class DocumentController {
     }
 
     @GetMapping("/stats/type")
-    public ResponseEntity<Map<Type, Long>> getStatsByType(){
+    public ResponseEntity<Map<String, Long>> getStatsByType(){
         List<Document> list = documentService.findAll();
-        Map<Type, Long> stats = list.stream().collect(Collectors.groupingBy(Document::getType, Collectors.counting()));
+        Map<String, Long> stats = list.stream().collect(Collectors.groupingBy(l -> l.getType().getNomType(), Collectors.counting()));
         return new ResponseEntity<>(stats, HttpStatus.OK);
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<Map<Date, Integer>> getStats(){
+    public ResponseEntity<Map<Date, Map<String, Long>>> getStats(){
+        //List<Document> list = documentService.findAll();
+        //Map<Date, Map<String, Long>> stats = list.stream().collect(Collectors.groupingBy(Document::getDate, list.stream().collect(Collectors.groupingBy(l -> l.toString(), Collectors.counting()))));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
