@@ -1,10 +1,9 @@
 package com.example.projetcomplementgl.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Date;
+
 
 @Entity
 @Table(name = "document")
