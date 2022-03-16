@@ -9,19 +9,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.Doc;
-import java.io.File;
-import java.time.LocalDate;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
-import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/doc")
 public class DocumentController {
-
-    private Pattern pattern = Pattern.compile("\\.[^.\\\\:*?\"<>|\\r\\n]+$");
 
     private final DocumentService documentService;
     private final TypeService typeService;
@@ -52,6 +48,25 @@ public class DocumentController {
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         documentService.remove(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/stats/date")
+    public ResponseEntity<Map<Date, Long>> getStatsByDate(){
+        List<Document> list = documentService.findAll();
+        Map<Date, Long> stats = list.stream().collect(Collectors.groupingBy(Document::getDate, Collectors.counting()));
+        return new ResponseEntity<>(stats, HttpStatus.OK);
+    }
+
+    @GetMapping("/stats/type")
+    public ResponseEntity<Map<Type, Long>> getStatsByType(){
+        List<Document> list = documentService.findAll();
+        Map<Type, Long> stats = list.stream().collect(Collectors.groupingBy(Document::getType, Collectors.counting()));
+        return new ResponseEntity<>(stats, HttpStatus.OK);
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<Map<Date, Integer>> getStats(){
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

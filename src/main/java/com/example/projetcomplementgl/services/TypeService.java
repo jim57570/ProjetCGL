@@ -4,6 +4,8 @@ import com.example.projetcomplementgl.entities.Type;
 import com.example.projetcomplementgl.repositories.TypeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TypeService {
 
@@ -11,6 +13,10 @@ public class TypeService {
 
     public TypeService(TypeRepository typeRepository) {
         this.typeRepository = typeRepository;
+    }
+
+    public List<Type> getAll() {
+        return this.typeRepository.findAll();
     }
 
     public Type getById(Long id) {
