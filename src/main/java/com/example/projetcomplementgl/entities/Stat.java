@@ -8,6 +8,9 @@ public class Stat {
     private String type;
     private Long nbDoc;
 
+
+    public Stat(){}
+
     public Stat(Date date, String type, Long nbDoc) {
         this.date = date;
         this.type = type;
