@@ -6,6 +6,7 @@ import com.example.projetcomplementgl.repositories.TypeRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest
 class TypeServiceTest {
 
 
@@ -25,8 +27,7 @@ class TypeServiceTest {
     @InjectMocks
     TypeService typeService;
 
-
- /*   @Test
+    @Test
     void whenFindAll_thenList() {
         //Given
         Type type = new Type(1L, "type");
@@ -62,5 +63,5 @@ class TypeServiceTest {
         Type gettype = typeService.getByName(type.getNomType());
         //Then
         assertThat(type).isEqualTo(type);
-    } */
+    }
 }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest
 class TypeControllerTest {
 
 
@@ -53,10 +55,10 @@ class TypeControllerTest {
     @Test
     void givenListType_whenGetAll_thenOk(){
 
-        //when(typeService.getAll()).thenReturn(ListType);
-        // ResponseEntity<List<Type>> newresponse = typeController.getAll();
-        //assertThat(newresponse.getBody()).isInstanceOf(Document.class);
-        //assertThat(newresponse.getStatusCode()).isEqualTo(responseListOk.getStatusCode());
+        when(typeService.getAll()).thenReturn(ListType);
+        ResponseEntity<List<Type>> newresponse = typeController.getAll();
+        assertThat(newresponse.getBody()).isInstanceOf(List.class);
+        assertThat(newresponse.getStatusCode()).isEqualTo(responseListOk.getStatusCode());
     }
 
 
